@@ -4,7 +4,7 @@ from models.task import Task
 app = Flask(__name__)
 
 # CRUD
-# Create, Read, Upadte and Delete
+# Create, Read, Update and Delete
 
 tasks = []
 task_id_control = 1
@@ -18,6 +18,30 @@ def create_task():
     tasks.append(new_task)
     print(tasks)
     return jsonify({"message": "Nova tarefa criada com sucesso!"})
+
+@app.route('/tasks', methods=['GET'])
+def get_tasks():
+    task_list = [task.to_dict() for task in tasks]
+
+    output = {
+                "tasks": task_list,
+                "total_tasks": len(task_list)
+            }
+    return jsonify(output)
+
+@app.route('/tasks/<int:id>', methods=['GET'])
+def get_task(id):
+    task = None
+    for t in tasks:
+        if t.id == id:
+            return jsonify(t.to_dict())
+    return jsonify({"message": "Não foi possível econtrar a atividade"}), 404
+
+@app.route('/user/<int:user_id>')
+def show_user(user_id):
+    print(user_id)
+    print(type(user_id))
+    return "%s" % user_id
 
 if __name__ == "__main__": 
     app.run(debug=True)
